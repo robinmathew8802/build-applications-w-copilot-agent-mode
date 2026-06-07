@@ -1,11 +1,29 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import './App.css'
+import { API_BASE, fetchJson } from './lib/api'
 
 function App() {
   const [count, setCount] = useState(0)
+  const [usersCount, setUsersCount] = useState<number | null>(null)
+  const [activitiesCount, setActivitiesCount] = useState<number | null>(null)
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const users = await fetchJson('/users')
+        setUsersCount(Array.isArray(users) ? users.length : null)
+        const activities = await fetchJson('/activities')
+        setActivitiesCount(Array.isArray(activities) ? activities.length : null)
+      } catch (err) {
+        console.error('Failed to load API data', err)
+      }
+    }
+
+    load()
+  }, [])
 
   return (
     <>
@@ -19,6 +37,13 @@ function App() {
           <h1>Get started</h1>
           <p>
             Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
+          </p>
+          <p style={{ marginTop: 8 }}>
+            <strong>API base:</strong> {API_BASE}
+          </p>
+          <p>
+            <strong>Users:</strong> {usersCount ?? 'loading...'} &nbsp;|
+            &nbsp; <strong>Activities:</strong> {activitiesCount ?? 'loading...'}
           </p>
         </div>
         <button
