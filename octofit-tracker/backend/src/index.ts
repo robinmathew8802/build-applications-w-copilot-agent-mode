@@ -1,17 +1,16 @@
 import express from 'express'
-import mongoose from 'mongoose'
 import activitiesRouter from './routes/activities'
 import leaderboardRouter from './routes/leaderboard'
 import teamsRouter from './routes/teams'
 import usersRouter from './routes/users'
 import workoutsRouter from './routes/workouts'
-import { seedDatabase } from './seed'
+import { seedDatabase } from './scripts/seed'
+import { connectDatabase, MONGO_URL } from './config/database'
 
 const codespaceName = process.env.CODESPACE_NAME
 const API_BASE_URL = codespaceName
   ? `https://${codespaceName}-8000.app.github.dev`
   : 'http://localhost:8000'
-const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017/octofit_db'
 const PORT = Number(process.env.PORT) || 8000
 
 const app = express()
@@ -37,8 +36,8 @@ app.use((_req, res) => {
 
 async function start() {
   try {
-    await mongoose.connect(MONGO_URL)
-    console.log('Connected to MongoDB')
+    await connectDatabase()
+    console.log(`Connected to MongoDB at ${MONGO_URL}`)
     await seedDatabase()
     app.listen(PORT, () => {
       console.log(`Backend listening on port ${PORT}`)

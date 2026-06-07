@@ -1,11 +1,16 @@
-import type { UserDocument } from './models/User'
-import { Activity } from './models/Activity'
-import { LeaderboardEntry } from './models/Leaderboard'
-import { Team } from './models/Team'
-import { User } from './models/User'
-import { Workout } from './models/Workout'
+import mongoose from 'mongoose'
+import type { UserDocument } from '../models/User'
+import { Activity } from '../models/Activity'
+import { LeaderboardEntry } from '../models/Leaderboard'
+import { Team } from '../models/Team'
+import { User } from '../models/User'
+import { Workout } from '../models/Workout'
 
+const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017/octofit_db'
+
+// Seed the octofit_db database with test data
 export async function seedDatabase() {
+  console.log('Seed the octofit_db database with test data')
   const existingUsers = await User.countDocuments()
   if (existingUsers > 0) {
     return
@@ -81,4 +86,18 @@ export async function seedDatabase() {
     { user: noah._id, rank: 2, score: 4500 },
     { user: ava._id, rank: 3, score: 3800 },
   ])
+}
+
+if (require.main === module) {
+  mongoose
+    .connect(MONGO_URL)
+    .then(async () => {
+      await seedDatabase()
+      console.log('Seed script completed successfully')
+      process.exit(0)
+    })
+    .catch((error) => {
+      console.error('Seed script failed', error)
+      process.exit(1)
+    })
 }
