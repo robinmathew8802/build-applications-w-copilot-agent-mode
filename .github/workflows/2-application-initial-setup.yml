@@ -65,7 +65,10 @@ jobs:
         uses: skills/action-keyphrase-checker@v2.0.0
         with:
           text-file: octofit-tracker/frontend/package.json
-          keyphrase: '"react": "^19'
+          # Keyphrase to search for in package.json. Ensure the inner double-quotes are balanced.
+          # You can also enclose the whole value in double-quotes and escape inner quotes, e.g.
+          #   keyphrase: "\"react\": \"^19\""
+          keyphrase: '"react"'
           minimum-occurrences: 1
           case-sensitive: false
 
